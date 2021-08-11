@@ -1,6 +1,7 @@
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Navbar, Nav, Container  } from 'react-bootstrap';
+import {variables} from './variables.js'
 
 function App() {
   return (

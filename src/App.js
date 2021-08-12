@@ -1,24 +1,45 @@
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Navbar, Nav, Container  } from 'react-bootstrap';
-import {variables} from './variables.js'
+import React, {Component} from 'react';
 
-function App() {
-  return (
-    <div className="App">
+class App extends Component {
 
-      <Navbar bg="dark" variant="dark">
-        <Container>
-          <Navbar.Brand href="#home">Navbar</Navbar.Brand>
-          <Nav className="me-auto">
-            <Nav.Link href="#home">Home</Nav.Link>
-            <Nav.Link href="#features">Features</Nav.Link>
-            <Nav.Link href="#pricing">Pricing</Nav.Link>
-          </Nav>
-        </Container>
-      </Navbar>
-    </div>
-  );
+  constructor(props) {
+    super(props);
+    this.state = {
+      items: [],
+      isLoaded: false
+    }
+  }
+
+  componentDidMount() {
+    fetch("https://localhost:5001/user")
+    .then(res => res.json())
+    .then(json => {
+        this.setState({
+          isLoaded: true,
+          items: json,
+        })
+    });
+  }
+  render () {
+    var {isLoaded, items} = this.state;
+    if(!isLoaded){
+      return <div>Loading...</div>
+    }
+    return(
+      <div className = "App"> 
+       <ul> 
+            {items.map(item => (
+                  <li>
+                         {item.user_name}
+                  </li>
+            ))};
+       </ul>
+
+      </div>
+    );
+  }
+
 }
-
 export default App;

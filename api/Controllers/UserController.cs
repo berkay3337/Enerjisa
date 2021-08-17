@@ -26,8 +26,8 @@ namespace api.Controllers
         public JsonResult Get()
         {
             string query = @"
-                            select user_name from
-                            dbo.users
+                            select * from
+                            dbo.users ORDER BY id ASC
                             ";
 
             DataTable table = new DataTable();
@@ -54,8 +54,8 @@ namespace api.Controllers
         {
             string query = @"
                            insert into dbo.users
-                           (id,user_name,password,user_type)
-                    values (@Id,@User_Name,@Password,@User_Type)
+                           (id,name,email,password,user_type)
+                    values (@Id,@Name,@Email,@Password,@User_Type)
                             ";
 
             DataTable table = new DataTable();
@@ -68,7 +68,8 @@ namespace api.Controllers
                 using (SqlCommand myCommand = new SqlCommand(query, conn))
                 {
                     myCommand.Parameters.AddWithValue("@Id", usr.id);
-                    myCommand.Parameters.AddWithValue("@User_Name", usr.user_name);
+                    myCommand.Parameters.AddWithValue("@Name", usr.name);
+                    myCommand.Parameters.AddWithValue("@Email", usr.email);
                     myCommand.Parameters.AddWithValue("@Password", usr.password);
                     myCommand.Parameters.AddWithValue("@User_Type", usr.user_type);
                     myReader = myCommand.ExecuteReader();
@@ -79,6 +80,66 @@ namespace api.Controllers
             }
 
             return new JsonResult("Added Successfully");
+        }
+
+
+        [HttpPut]
+        public JsonResult Put(users usr)
+        {
+            string query = @"
+                    update dbo.users set 
+                    id = '" + usr.id + @"'
+                    ,name = '" + usr.name + @"'
+                    ,email = '" + usr.email + @"'
+                    ,password = '" + usr.password + @"'
+                    ,user_type = '" + usr.user_type + @"'
+                    where id = " + usr.id + @" 
+                    ";
+            DataTable table = new DataTable();
+            string sqlDataSource = _configuration.GetConnectionString("UserAppCon");
+            SqlConnection conn = new SqlConnection("Server = DESKTOP-IDBC57N\\SQLEXPRESS01; Database = mytestdb; Integrated Security = True;") ;
+            SqlDataReader myReader;
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                conn.Open();
+                using (SqlCommand myCommand = new SqlCommand(query, conn))
+                {
+                    myReader = myCommand.ExecuteReader();
+                    table.Load(myReader); ;
+
+                    myReader.Close();
+                    conn.Close();
+                }
+            }
+
+            return new JsonResult("Updated Successfully");
+        }
+
+        [HttpDelete("{id}")]
+        public JsonResult Delete(int id)
+        {
+            string query = @"
+                    delete from dbo.users
+                    where id = " + id + @" 
+                    ";
+            DataTable table = new DataTable();
+            string sqlDataSource = _configuration.GetConnectionString("UserAppCon");
+            SqlConnection conn = new SqlConnection("Server = DESKTOP-IDBC57N\\SQLEXPRESS01; Database = mytestdb; Integrated Security = True;") ;
+            SqlDataReader myReader;
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                conn.Open();
+                using (SqlCommand myCommand = new SqlCommand(query, conn))
+                {
+                    myReader = myCommand.ExecuteReader();
+                    table.Load(myReader); ;
+
+                    myReader.Close();
+                    conn.Close();
+                }
+            }
+
+            return new JsonResult("Deleted Successfully");
         }
 
     }

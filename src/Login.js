@@ -98,7 +98,7 @@ export class Login extends Component {
                                 <Form.Control type="password" placeholder="Şifre"  onChange={e => this.setState({ pass: e.target.value })} />
                             </Form.Group>
                             <ReCAPTCHA
-                                sitekey="6LdmLGkbAAAAALjod-81rgyyUeNE_xwKLrHRSmy9"
+                                sitekey="clientkey"
                                 style={{ marginLeft: '95px' }}
 
                             />

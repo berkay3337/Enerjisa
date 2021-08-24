@@ -50,7 +50,23 @@ export class Admin extends Component {
             .then((result) => {
 
             }, (error) => {
-                alert('Failed');
+            
+            })
+
+        fetch("https://localhost:5001/user/" + this.state.email+"/"+this.state.name+"/"+this.state.password, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+
+
+        })
+            .then(res => res.json())
+            .then((result) => {
+
+            }, (error) => {
+                
             })
         this.setState({ show: false })
         window.location.reload();
@@ -80,16 +96,19 @@ export class Admin extends Component {
                 (error) => {
                     alert('Failed');
                 })
+
         this.setState({ editshow: false })
         window.location.reload();
     }
 
-    deleteUsr(empid){
-        if(window.confirm('Are you sure?')){
-            fetch("https://localhost:5001/user/"+empid,{
-                method:'DELETE',
-                header:{'Accept':'application/json',
-            'Content-Type':'application/json'}
+    deleteUsr(empid) {
+        if (window.confirm('Are you sure?')) {
+            fetch("https://localhost:5001/user/" + empid, {
+                method: 'DELETE',
+                header: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
             })
         }
         window.location.reload();
@@ -160,7 +179,7 @@ export class Admin extends Component {
                                     id: item.id, name: item.name, email: item.email,
                                     password: item.password, user_type: item.user_type
                                 })}>Düzenle </Button>
-                                    <Button variant="danger" style={{ marginLeft: '20px' }} onClick={()=>this.deleteUsr(item.id)} >Sil</Button></td>
+                                    <Button variant="danger" style={{ marginLeft: '20px' }} onClick={() => this.deleteUsr(item.id)} >Sil</Button></td>
 
                             </tr>
                         ))}
@@ -173,11 +192,6 @@ export class Admin extends Component {
                     </Modal.Header>
                     <Modal.Body>
                         <Form>
-                            <Form.Group className="mb-3">
-                                <Form.Label>Id</Form.Label>
-                                <Form.Control type="number" placeholder="Id Giriniz." onChange={e => this.setState({ id: e.target.value })} />
-                            </Form.Group>
-
                             <Form.Group className="mb-3">
                                 <Form.Label>İsim</Form.Label>
                                 <Form.Control type="text" placeholder="İsim Giriniz." onChange={e => this.setState({ name: e.target.value })} />

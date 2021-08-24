@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using System.Data;
 using System.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
+using System.Net;
+using System.Net.Mail;
 
 namespace api.Controllers
 {
@@ -33,11 +35,35 @@ namespace api.Controllers
             DataTable table = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("UserAppCon");
             SqlDataReader myReader;
-            using(SqlConnection myCon=new SqlConnection(sqlDataSource))
-            {   
-                SqlConnection conn = new SqlConnection("Server = DESKTOP-IDBC57N\\SQLEXPRESS01; Database = mytestdb; Integrated Security = True;") ;
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                SqlConnection conn = new SqlConnection("Server = DESKTOP-IDBC57N\\SQLEXPRESS01; Database = mytestdb; Integrated Security = True;");
                 conn.Open();
-                using(SqlCommand myCommand=new SqlCommand(query, conn))
+                using (SqlCommand myCommand = new SqlCommand(query, conn))
+                {
+                    myReader = myCommand.ExecuteReader();
+                    table.Load(myReader);
+                    myReader.Close();
+                    conn.Close();
+                }
+            }
+
+            return new JsonResult(table);
+        }
+
+        [HttpGet("{email}/{password}")]
+        public JsonResult loginControl(string email, string password)
+        {
+            string query = string.Format("select * from dbo.users where email='{0}'", email );
+
+            DataTable table = new DataTable();
+            string sqlDataSource = _configuration.GetConnectionString("UserAppCon");
+            SqlDataReader myReader;
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                SqlConnection conn = new SqlConnection("Server = DESKTOP-IDBC57N\\SQLEXPRESS01; Database = mytestdb; Integrated Security = True;");
+                conn.Open();
+                using (SqlCommand myCommand = new SqlCommand(query, conn))
                 {
                     myReader = myCommand.ExecuteReader();
                     table.Load(myReader);
@@ -60,7 +86,7 @@ namespace api.Controllers
 
             DataTable table = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("UserAppCon");
-            SqlConnection conn = new SqlConnection("Server = DESKTOP-IDBC57N\\SQLEXPRESS01; Database = mytestdb; Integrated Security = True;") ;
+            SqlConnection conn = new SqlConnection("Server = DESKTOP-IDBC57N\\SQLEXPRESS01; Database = mytestdb; Integrated Security = True;");
             SqlDataReader myReader;
             using (SqlConnection myCon = new SqlConnection(sqlDataSource))
             {
@@ -97,7 +123,7 @@ namespace api.Controllers
                     ";
             DataTable table = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("UserAppCon");
-            SqlConnection conn = new SqlConnection("Server = DESKTOP-IDBC57N\\SQLEXPRESS01; Database = mytestdb; Integrated Security = True;") ;
+            SqlConnection conn = new SqlConnection("Server = DESKTOP-IDBC57N\\SQLEXPRESS01; Database = mytestdb; Integrated Security = True;");
             SqlDataReader myReader;
             using (SqlConnection myCon = new SqlConnection(sqlDataSource))
             {
@@ -124,7 +150,7 @@ namespace api.Controllers
                     ";
             DataTable table = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("UserAppCon");
-            SqlConnection conn = new SqlConnection("Server = DESKTOP-IDBC57N\\SQLEXPRESS01; Database = mytestdb; Integrated Security = True;") ;
+            SqlConnection conn = new SqlConnection("Server = DESKTOP-IDBC57N\\SQLEXPRESS01; Database = mytestdb; Integrated Security = True;");
             SqlDataReader myReader;
             using (SqlConnection myCon = new SqlConnection(sqlDataSource))
             {
@@ -141,6 +167,41 @@ namespace api.Controllers
 
             return new JsonResult("Deleted Successfully");
         }
+
+        [HttpPost("{email}/{name}/{password}")]
+        public JsonResult sendEmail(string email, string name, string password)
+        {
+            var fromAddress = new MailAddress("FromAdress", "FromName");
+            var toAddress = new MailAddress("toAdress", "toName");
+            const string fromPassword = "fromPassword";
+            const string subject = "mailSubject";
+            string body = "mailBody";
+
+            var smtp = new SmtpClient
+            {
+                Host = "smtp.gmail.com",
+                Port = 587,
+                EnableSsl = true,
+                DeliveryMethod = SmtpDeliveryMethod.Network,
+                UseDefaultCredentials = false,
+                Credentials = new NetworkCredential(fromAddress.Address, fromPassword)
+            };
+            using (var message = new MailMessage(fromAddress, toAddress)
+            {
+                Subject = subject,
+                Body = body
+            })
+            {
+                smtp.Send(message);
+            }
+
+
+            return new JsonResult("Sended Successufly");
+        }
+
+
+
+
 
     }
 }

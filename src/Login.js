@@ -70,7 +70,7 @@ export class Login extends Component {
                         <Alert.Heading>Hatalı Giriş!</Alert.Heading>
                         <p>Lütfen Tekrar Deneyiniz</p>
                     </Alert>
-                ) : (
+                ) : 
                     console.log("alert")
                 )}
                 {window.sessionStorage.getItem("isLoggedIn") ? (
@@ -117,6 +117,36 @@ export class Login extends Component {
                     <Route path='/home' component={Home}/>
                 </Switch>
                 </BrowserRouter>
+
+                          console.log("alert")    
+                        )}
+                <Row>
+                    <Col md={{ span: 3, offset: 4 }}>
+
+                        <Form style={formstyle}>
+                            <Form.Group className="mb-3" controlId="formBasicEmail">
+                                <Form.Label>Email</Form.Label>
+                                <Form.Control type="email" placeholder="Email adresinizi girin."  onChange={e => this.setState({ val: e.target.value })} />
+                            </Form.Group>
+
+                            <Form.Group className="mb-3" controlId="formBasicPassword">
+                                <Form.Label>Şifre</Form.Label>
+                                <Form.Control type="password" placeholder="Şifre"  onChange={e => this.setState({ pass: e.target.value })} />
+                            </Form.Group>
+                            <ReCAPTCHA
+                                sitekey="clientkey"
+                                style={{ marginLeft: '95px' }}
+
+                            />
+                            <br></br>
+                            <Button variant="primary" style={buttonstyle} onClick={this.loginControl.bind(this)} >
+                                Giriş Yap
+                            </Button>
+                        </Form>
+
+                    </Col>
+                </Row>
+
             </Container>
         );
     }
